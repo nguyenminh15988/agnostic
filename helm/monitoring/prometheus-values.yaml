@@ -1,0 +1,22 @@
+server:
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 250m
+    limits:
+      memory: 1Gi
+      cpu: 500m
+
+alertmanager:
+  enabled: false
+
+pushgateway:
+  enabled: false
+
+# Enable Node Exporter to collect node metrics
+nodeExporter:
+  enabled: true
+
+# Enable Kube State Metrics to monitor Kubernetes objects
+kubeStateMetrics:
+  enabled: true

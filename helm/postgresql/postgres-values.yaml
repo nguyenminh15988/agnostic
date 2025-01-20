@@ -1,0 +1,73 @@
+global:
+  postgresql:
+    auth:
+      postgresPassword: "securepassword"
+      database: "mydatabase"
+      username: "myuser"
+      password: "securepassword"
+
+primary:
+  image:
+    repository: bitnami/postgresql
+    tag: 15
+  persistence:
+    enabled: true
+    size: 2Gi
+    storageClass: "standard"  # Adjust to your storage class if needed
+
+  initContainers:
+    - name: fix-tls-permissions
+      image: bitnami/postgresql:15
+      command:
+        - sh
+        - -c
+        - |
+          echo "Copying certificates to writable directory and fixing permissions..." &&
+          mkdir -p /bitnami/postgresql/certs &&
+          cp /certs/* /bitnami/postgresql/certs/ &&
+          chmod 600 /bitnami/postgresql/certs/server.key
+      volumeMounts:
+        - name: postgres-tls
+          mountPath: /certs
+        - name: data
+          mountPath: /bitnami/postgresql
+
+  extraVolumes:
+    - name: postgres-tls
+      secret:
+        secretName: postgres-tls
+  extraVolumeMounts:
+    - name: postgres-tls
+      mountPath: /certs
+      readOnly: true
+
+  env:
+    - name: POSTGRESQL_ENABLE_TLS
+      value: "yes"
+    - name: POSTGRESQL_TLS_CERT_FILE
+      value: "/bitnami/postgresql/certs/server.crt"
+    - name: POSTGRESQL_TLS_KEY_FILE
+      value: "/bitnami/postgresql/certs/server.key"
+    - name: POSTGRESQL_TLS_CA_FILE
+      value: "/bitnami/postgresql/certs/ca.crt"
+
+  tls:
+    enabled: true
+
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 250m
+    limits:
+      memory: 512Mi
+      cpu: 500m
+
+replica:
+  replicaCount: 1
+
+metrics:
+  enabled: false
+
+# enable this option for HA
+# replication:
+#   enabled: true
