@@ -79,11 +79,11 @@ Ensure the following tools are installed and configured:
 ### **1. Build and Push the Docker Image**
 1. Build the Docker image for the Flask application:
    ```bash
-   docker build -t your-dockerhub-username/flask-backend:latest flask-backend/.
+   docker build -t minh15988/flask-backend:latest flask-backend/.
    ```
 2. Push the image to Docker Hub:
    ```bash
-   docker push your-dockerhub-username/flask-backend:latest
+   docker push minh15988/flask-backend:latest
    ```
 
 ### **2. Deploy the Application**
